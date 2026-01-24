@@ -1,0 +1,9 @@
+flask
+httpx
+truststore
+httpx[http2]
+logging
+typing
+fastapi
+fastapi_mcp
+uvicorn

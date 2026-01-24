@@ -1,0 +1,11 @@
+---
+applications:
+  - name: northwind-mcp
+    path: .
+    memory: 256M
+    disk_quota: 512M
+    random-route: true
+    buildpacks:
+      - python_buildpack
+    env:
+      PYTHONUNBUFFERED: "1"
