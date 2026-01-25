@@ -1,4 +1,4 @@
-
+# logging package used to display the log messages to stdout/stderr
 import logging
 from typing import List, Optional, Dict, Any, Set
 
@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from functools import lru_cache
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("northwind-mcp")
+logger = logging.getLogger(__name__)
 
 BASE_URL = "https://services.odata.org/V2/Northwind/Northwind.svc"
 METADATA_URL = f"{BASE_URL}/$metadata"
@@ -256,6 +256,7 @@ mcp.mount()
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", "8080"))
+    logger.info("Launching Odata based MCP Server")
     uvicorn.run(
         app,
         host="0.0.0.0",

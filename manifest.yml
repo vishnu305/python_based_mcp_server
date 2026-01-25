@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: northwind-mcp
+  - name: odata-mcp
     path: .
     memory: 256M
     disk_quota: 512M
