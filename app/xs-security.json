@@ -1,0 +1,18 @@
+{
+"xsappname": "com-insightful-mcp",
+"tenant-mode": "shared",
+"scopes": [
+{ "name": "$XSAPPNAME.mcp.read", "description": "Read access to MCP endpoints" },
+{ "name": "$XSAPPNAME.mcp.write", "description": "Write/update access to MCP endpoints" },
+{ "name": "$XSAPPNAME.mcp.admin", "description": "Administrative access for MCP" }
+],
+"role-templates": [
+{ "name": "MCPReader", "description": "Read-only role for MCP", "scope-references": ["$XSAPPNAME.mcp.read"] },
+{ "name": "MCPEditor", "description": "Read/write role for MCP", "scope-references": ["$XSAPPNAME.mcp.read","$XSAPPNAME.mcp.write"] },
+{ "name": "MCPAdmin", "description": "Admin role for MCP", "scope-references": ["$XSAPPNAME.mcp.admin","$XSAPPNAME.mcp.read","$XSAPPNAME.mcp.write"] }
+],
+"oauth2-configuration": {
+"token-validity": 3600,
+"redirect-uris": []
+}
+}

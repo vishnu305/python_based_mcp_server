@@ -9,3 +9,7 @@ fastapi_mcp
 uvicorn
 mcp[cli]
 mcp
+scikit-learn
+python-dotenv
+PyJWT
+python-jose

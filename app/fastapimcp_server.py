@@ -5,11 +5,13 @@ from typing import List, Optional, Dict, Any, Set
 import ssl
 import httpx
 import truststore
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Depends
 from fastapi_mcp import FastApiMCP
 import uvicorn
 import xml.etree.ElementTree as ET
 from functools import lru_cache
+
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -98,6 +100,19 @@ def _select_csv(select: Optional[List[str]]) -> Optional[str]:
 #         ]
 #     }
 
+oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
+@app.get('/token')
+async def token_generate(form_data: OAuth2PasswordRequestForm = Depends()):
+    print(form_data)
+    return {"access_token": form_data.username, "token_type":"beared"}
+    # form_data.username,passoword,scopes,client_id,client_secret
+
+@app.post('/selfie')
+async def profile_pic(token: str = Depends(oauth_scheme)):
+    print(token)
+    return token
+
+
 @app.get('/metadata')
 def get_metadata():
     ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -150,7 +165,7 @@ def get_products_with_select(
 
 @app.get("/prwf")
 def get_products_with_filter(
-    filter: str = Query(..., description="Filter expression to filter products"),
+    filter: Optional[str] = Query(..., description="Filter expression to filter products"),
 ):
     params: Dict[str, Any] = {"$format": "json"}
     

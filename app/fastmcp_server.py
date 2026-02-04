@@ -6,9 +6,16 @@ import ssl
 import truststore
 from mcp.server.fastmcp import FastMCP
 
+import json
 
 import xml.etree.ElementTree as ET
 from functools import lru_cache
+
+import sqlite3
+import os
+from pathlib import Path
+
+from lightweight_rag_engine import LightweightRAGEngine, load_text, normalize_whitespace
 
 
 logging.basicConfig(level=logging.INFO)
@@ -79,8 +86,7 @@ def _select_csv(select: Optional[List[str]]) -> Optional[str]:
     filtered = [f for f in select if f in allowed]
     return ",".join(filtered) if filtered else None
 
-
-@mcp.tool()
+@mcp.tool(name="get_products")
 def get_products(
     top: Optional[int] = None,
     select: Optional[List[str]] = None,
@@ -110,12 +116,10 @@ def get_products(
         r.raise_for_status()
         data = r.json()
 
-    # V2 JSON envelope: { "d": { "results": [...] } }
-    # rows = data.get("d", {}).get("results", [])
     rows = data["d"]
     return {"count": len(rows), "rows": rows}
 
-@mcp.tool()
+@mcp.tool(name="get_product_count")
 def get_products_count(
     filter: Optional[str] = None
 ) -> Dict[str, int]:
@@ -137,6 +141,34 @@ def get_products_count(
         # $count returns plain text integer
         cnt = int(r.text.strip())
     return {"count": cnt}
+
+@mcp.tool(name="shell_abap_artifacts")
+def shell_abap_artifacts(
+    question: str
+):
+    try:
+        rag_engine = LightweightRAGEngine(chunk_size=1200, overlap=200)
+        data_text = normalize_whitespace(load_text("app/data.json"))
+        rag_engine.build_index(data_text)
+        prompt = rag_engine.generate_rag_prompt(question, top_k=5)
+        logger.info(prompt)
+        return prompt
+
+    except Exception as e:
+        return {"error": str(e)}
+
+# @mcp.tool(name="shell_abap_artifacts")
+# def shell_abap_artifacts(
+#     # question: Optional[str] = None
+# ):
+
+#     file_path = "app/data.json"
+
+#     with open(file_path, "r", encoding="utf-8") as file:
+#         data = json.load(file)         
+#         context_text = json.dumps(data, indent=4) 
+
+#     return context_text
 
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")

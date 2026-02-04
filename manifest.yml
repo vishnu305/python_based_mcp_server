@@ -2,10 +2,16 @@
 applications:
   - name: odata-mcp
     path: .
-    memory: 256M
-    disk_quota: 512M
+    memory: 1056M
+    disk_quota: 1056M
     random-route: true
     buildpacks:
       - python_buildpack
     env:
       PYTHONUNBUFFERED: "1"
+      XSUAA_JWKS_URL: "https://e65fd1d1trial.authentication.us10.hana.ondemand.com/token_keys"
+      XSUAA_ISSUER: "https://e65fd1d1trial.authentication.us10.hana.ondemand.com/oauth/token"
+      XSUAA_AUDIENCE: "sb-com-insightful-mcp!t571431"
+      REQUIRE_AUTH: "true"
+    services:
+      - xsuaa-instance

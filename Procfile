@@ -1,1 +1,1 @@
-web: python app/fastmcp_server.py
+web: python app/server.py
